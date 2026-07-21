@@ -9,13 +9,14 @@
 <style>
   :root{--ink:#5B3247;--rose:#FF6F91;--rose-deep:#E24E73;--coral:#FF9A8B;--gold:#EBB94A;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{overflow-x:hidden;}
   body{
     margin:0;color:var(--ink);font-family:"Gowun Dodum",sans-serif;
     background:linear-gradient(160deg,#FFF3F1,#FDE7EF 45%,#F3E9FF);
     min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;
   }
   .wrap{width:100%;max-width:440px;}
-  .step{display:none;background:#fff;border-radius:28px;padding:38px 26px 34px;text-align:center;box-shadow:0 18px 50px -12px rgba(226,78,115,.22);}
+  .step{display:none;background:#fff;border-radius:28px;padding:38px 24px 34px;text-align:center;box-shadow:0 18px 50px -12px rgba(226,78,115,.22);}
   .step.active{display:block;}
   h1{font-family:"Jua",sans-serif;font-weight:400;line-height:1.35;margin:0 0 8px;color:var(--rose-deep);font-size:26px;}
   .sub{font-size:16px;color:#8a6b78;margin:6px 0 24px;line-height:1.6;}
@@ -27,7 +28,12 @@
   #noBtn.run{position:fixed;z-index:5;width:auto;min-width:120px;}
   .field{margin:16px 0 6px;text-align:left;}
   .field label{font-family:"Jua",sans-serif;font-size:16px;color:var(--rose-deep);display:block;margin:0 0 7px;}
-  input{width:100%;font-family:"Gowun Dodum",sans-serif;font-size:17px;color:var(--ink);padding:14px 16px;border:2px solid #ffd7e1;border-radius:16px;background:#fff8fa;outline:none;}
+  input{
+    -webkit-appearance:none;appearance:none;box-sizing:border-box;
+    display:block;width:100%;max-width:100%;min-width:0;
+    font-family:"Gowun Dodum",sans-serif;font-size:16px;color:var(--ink);
+    padding:14px 14px;border:2px solid #ffd7e1;border-radius:16px;background:#fff8fa;outline:none;
+  }
   input:focus{border-color:var(--rose);}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:18px 0 8px;}
   .chip{font-size:16px;padding:16px 8px;border-radius:16px;background:#fff8fa;border:2px solid #ffe0e8;cursor:pointer;user-select:none;}
@@ -158,15 +164,32 @@ function pickTheme(){
   go(4);
 }
 
-function saveImage(){
+// 아이폰 친화 저장: 공유창 → 안 되면 이미지 꾹 눌러 저장
+async function saveImage(){
   const el=document.getElementById('ticket');
-  if(typeof html2canvas==="undefined"){alert("저장을 못 했어 😢 화면을 직접 캡처해서 보내줘!");return;}
-  html2canvas(el,{backgroundColor:"#ffffff",scale:2}).then(canvas=>{
-    const a=document.createElement('a');
-    a.download='우리의_데이트_약속.png';
-    a.href=canvas.toDataURL('image/png');
-    a.click();
-  }).catch(()=>alert("저장을 못 했어 😢 화면을 직접 캡처해서 보내줘!"));
+  try{
+    const canvas=await html2canvas(el,{backgroundColor:"#ffffff",scale:2});
+    canvas.toBlob(async (blob)=>{
+      const file=new File([blob],"우리의_데이트_약속.png",{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{await navigator.share({files:[file],title:"우리의 데이트 약속"});return;}catch(e){}
+      }
+      showOverlay(URL.createObjectURL(blob));
+    },"image/png");
+  }catch(e){alert("저장이 안 됐어 😢 이 화면을 직접 캡처해서 보내줘!");}
+}
+function showOverlay(url){
+  const ov=document.createElement('div');
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:14px;";
+  const img=new Image();img.src=url;img.style.cssText="max-width:100%;max-height:68vh;border-radius:16px;";
+  const txt=document.createElement('p');
+  txt.textContent="이미지를 꾹 눌러 '사진에 저장' 해줘! 💗";
+  txt.style.cssText="color:#fff;font-family:'Gowun Dodum',sans-serif;text-align:center;margin:0;";
+  const btn=document.createElement('button');
+  btn.textContent="닫기";
+  btn.style.cssText="padding:12px 26px;border:none;border-radius:14px;background:#fff;color:#E24E73;font-family:'Jua',sans-serif;font-size:16px;";
+  btn.onclick=()=>ov.remove();
+  ov.append(img,txt,btn);document.body.appendChild(ov);
 }
 </script>
 </body>
