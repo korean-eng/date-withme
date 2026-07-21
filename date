@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나랑 데이트 할래? 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{--ink:#5B3247;--rose:#FF6F91;--rose-deep:#E24E73;--coral:#FF9A8B;--gold:#EBB94A;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;color:var(--ink);font-family:"Gowun Dodum",sans-serif;
+    background:linear-gradient(160deg,#FFF3F1,#FDE7EF 45%,#F3E9FF);
+    min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .wrap{width:100%;max-width:440px;}
+  .step{display:none;background:#fff;border-radius:28px;padding:38px 26px 34px;text-align:center;box-shadow:0 18px 50px -12px rgba(226,78,115,.22);}
+  .step.active{display:block;}
+  h1{font-family:"Jua",sans-serif;font-weight:400;line-height:1.35;margin:0 0 8px;color:var(--rose-deep);font-size:26px;}
+  .sub{font-size:16px;color:#8a6b78;margin:6px 0 24px;line-height:1.6;}
+  .emoji{font-size:54px;display:block;margin:4px 0 14px;}
+  .btn{font-family:"Jua",sans-serif;font-size:19px;border:none;cursor:pointer;padding:15px 22px;border-radius:18px;color:#fff;width:100%;background:linear-gradient(135deg,var(--rose),var(--coral));box-shadow:0 8px 20px -6px rgba(226,78,115,.22);margin-top:6px;}
+  .btn.gold{background:linear-gradient(135deg,#F3C969,var(--gold));color:#5a3d00;}
+  .btn.ghost{background:#fff;color:var(--rose-deep);border:2px solid #ffd7e1;box-shadow:none;}
+  #noBtn{background:#fff;color:#b98;border:2px solid #eee;box-shadow:none;transition:left .25s,top .25s;}
+  #noBtn.run{position:fixed;z-index:5;width:auto;min-width:120px;}
+  .field{margin:16px 0 6px;text-align:left;}
+  .field label{font-family:"Jua",sans-serif;font-size:16px;color:var(--rose-deep);display:block;margin:0 0 7px;}
+  input{width:100%;font-family:"Gowun Dodum",sans-serif;font-size:17px;color:var(--ink);padding:14px 16px;border:2px solid #ffd7e1;border-radius:16px;background:#fff8fa;outline:none;}
+  input:focus{border-color:var(--rose);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:18px 0 8px;}
+  .chip{font-size:16px;padding:16px 8px;border-radius:16px;background:#fff8fa;border:2px solid #ffe0e8;cursor:pointer;user-select:none;}
+  .chip .ic{display:block;font-size:26px;margin-bottom:5px;}
+  .chip.sel{background:#ffe6ef;border-color:var(--rose);color:var(--rose-deep);}
+  .chip.wide{grid-column:1/-1;}
+  .ticket{background:#fff6f9;border:2px dashed var(--rose);border-radius:22px;padding:24px 22px;margin:6px 0 18px;}
+  .ticket h2{font-family:"Jua",sans-serif;font-weight:400;margin:0 0 16px;font-size:23px;color:var(--ink);}
+  .line{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px dashed #f2c9d6;}
+  .line:last-child{border-bottom:none;}
+  .k{font-family:"Jua",sans-serif;color:var(--rose-deep);font-size:15px;}
+  .v{font-size:17px;font-weight:700;max-width:62%;text-align:right;}
+  .hint{font-size:13px;color:#b08a97;margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="step active" id="s1">
+    <span class="emoji">🌸</span>
+    <h1>나랑 데이트 할래?</h1>
+    <p class="sub">부탁이야.. 딱 한 번만! 🥹</p>
+    <button class="btn" onclick="go(2)">응, 좋아 💕</button>
+    <button class="btn" id="noBtn">싫어</button>
+  </section>
+
+  <section class="step" id="s2">
+    <h1>언제가 편해? 📅</h1>
+    <p class="sub">날짜랑 시간을 골라줘!</p>
+    <div class="field"><label>📆 날짜</label><input type="date" id="dateIn"></div>
+    <div class="field"><label>⏰ 시간</label><input type="time" id="timeIn" value="18:00"></div>
+    <button class="btn" onclick="pickDate()">이 날 좋아! 👍</button>
+  </section>
+
+  <section class="step" id="s3">
+    <h1>이 날 뭐 할까? ✨</h1>
+    <p class="sub">데이트 테마를 골라줘!</p>
+    <div class="grid" id="themeGrid"></div>
+    <button class="btn gold" onclick="pickTheme()">이걸로 정했어! 💌</button>
+  </section>
+
+  <section class="step" id="s4">
+    <span class="emoji">💌</span>
+    <h1>거절 안 해줘서 고마워!</h1>
+    <p class="sub">예쁘게 입고 갈게, 완전 기대돼! 💕</p>
+    <div class="ticket" id="ticket">
+      <h2>우리의 데이트 약속</h2>
+      <div class="line"><span class="k">📅 날짜</span><span class="v" id="outDate">-</span></div>
+      <div class="line"><span class="k">⏰ 시간</span><span class="v" id="outTime">-</span></div>
+      <div class="line"><span class="k">🎀 테마</span><span class="v" id="outTheme">-</span></div>
+    </div>
+    <button class="btn gold" onclick="saveImage()">📸 이미지 저장해서 답장 보내기</button>
+    <button class="btn ghost" onclick="go(1)">처음부터 다시하기</button>
+    <p class="hint">저장한 이미지를 나한테 보내주면 돼! 💗</p>
+  </section>
+
+</div>
+
+<script>
+const THEMES=[
+  {ic:"🎬",name:"영화관"},{ic:"☕",name:"감성 카페"},
+  {ic:"🍽️",name:"맛집 투어"},{ic:"🔐",name:"방탈출"},
+  {ic:"🎨",name:"전시회"},{ic:"🚗",name:"드라이브"},
+  {ic:"🎡",name:"놀이공원"},{ic:"🌇",name:"노을 산책"}
+];
+
+let selectedTheme=null;
+const g=document.getElementById('themeGrid');
+THEMES.forEach(t=>{
+  const c=document.createElement('div');
+  c.className='chip';
+  c.innerHTML='<span class="ic">'+t.ic+'</span>'+t.name;
+  c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');selectedTheme=t;};
+  g.appendChild(c);
+});
+const any=document.createElement('div');
+any.className='chip wide';
+any.innerHTML='<span class="ic">😊</span>난 뭐든 다 좋아!';
+any.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));any.classList.add('sel');selectedTheme={ic:"😊",name:"뭐든 다 좋아"};};
+g.appendChild(any);
+
+function go(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+const d=document.getElementById('dateIn');
+const tm=new Date();tm.setDate(tm.getDate()+1);
+d.min=new Date().toISOString().split('T')[0];
+d.value=tm.toISOString().split('T')[0];
+
+// 도망가는 싫어 버튼
+const no=document.getElementById('noBtn');
+const texts=["싫어","진짜 싫어?","한 번만~","에이 왜~","제발!! 🥺","도망가지 마!"];
+let i=0;
+function run(){
+  i=Math.min(i+1,texts.length-1);
+  no.textContent=texts[i];
+  no.classList.add('run');
+  const w=no.offsetWidth,h=no.offsetHeight;
+  no.style.left=(Math.random()*(innerWidth-w-20)+10)+'px';
+  no.style.top=(Math.random()*(innerHeight-h-20)+10)+'px';
+}
+no.addEventListener('mouseenter',run);
+no.addEventListener('touchstart',e=>{e.preventDefault();run();},{passive:false});
+no.addEventListener('click',e=>{e.preventDefault();run();});
+
+let dateStr="",timeStr="";
+function pickDate(){
+  const dv=document.getElementById('dateIn').value;
+  const tv=document.getElementById('timeIn').value;
+  if(!dv||!tv){alert("날짜랑 시간을 모두 골라줘! 😊");return;}
+  const dt=new Date(dv+"T"+tv);
+  const days=["일","월","화","수","목","금","토"];
+  dateStr=dt.getFullYear()+"년 "+(dt.getMonth()+1)+"월 "+dt.getDate()+"일 ("+days[dt.getDay()]+")";
+  let h=dt.getHours();const m=String(dt.getMinutes()).padStart(2,'0');
+  const ap=h<12?"오전":"오후";let hh=h%12;if(hh===0)hh=12;
+  timeStr=ap+" "+hh+":"+m;
+  go(3);
+}
+
+function pickTheme(){
+  if(!selectedTheme){alert("테마를 하나 골라줘! ✨");return;}
+  document.getElementById('outDate').textContent=dateStr;
+  document.getElementById('outTime').textContent=timeStr;
+  document.getElementById('outTheme').textContent=selectedTheme.ic+" "+selectedTheme.name;
+  go(4);
+}
+
+function saveImage(){
+  const el=document.getElementById('ticket');
+  if(typeof html2canvas==="undefined"){alert("저장을 못 했어 😢 화면을 직접 캡처해서 보내줘!");return;}
+  html2canvas(el,{backgroundColor:"#ffffff",scale:2}).then(canvas=>{
+    const a=document.createElement('a');
+    a.download='우리의_데이트_약속.png';
+    a.href=canvas.toDataURL('image/png');
+    a.click();
+  }).catch(()=>alert("저장을 못 했어 😢 화면을 직접 캡처해서 보내줘!"));
+}
+</script>
+</body>
+</html>
