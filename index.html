@@ -7,44 +7,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  :root{--ink:#5B3247;--rose:#FF6F91;--rose-deep:#E24E73;--coral:#FF9A8B;--gold:#EBB94A;}
+  :root{
+    --ink:#5B3247;--accent:#FF6F91;--accent-deep:#E24E73;--accent-soft:#FF9A8B;
+    --bg1:#FFF3F1;--bg2:#FDE7EF;--bg3:#F3E9FF;--chipbg:#fff8fa;--chipbd:#ffe0e8;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{overflow-x:hidden;}
   body{
     margin:0;color:var(--ink);font-family:"Gowun Dodum",sans-serif;
-    background:linear-gradient(160deg,#FFF3F1,#FDE7EF 45%,#F3E9FF);
+    background:linear-gradient(160deg,var(--bg1),var(--bg2) 45%,var(--bg3));
     min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;
+    transition:background .6s ease;
   }
   .wrap{width:100%;max-width:440px;}
-  .step{display:none;background:#fff;border-radius:28px;padding:38px 24px 34px;text-align:center;box-shadow:0 18px 50px -12px rgba(226,78,115,.22);}
+  .step{display:none;background:#fff;border-radius:28px;padding:38px 24px 34px;text-align:center;box-shadow:0 18px 50px -12px rgba(0,0,0,.18);}
   .step.active{display:block;}
-  h1{font-family:"Jua",sans-serif;font-weight:400;line-height:1.35;margin:0 0 8px;color:var(--rose-deep);font-size:26px;}
+  h1{font-family:"Jua",sans-serif;font-weight:400;line-height:1.35;margin:0 0 8px;color:var(--accent-deep);font-size:26px;transition:color .5s;}
   .sub{font-size:16px;color:#8a6b78;margin:6px 0 24px;line-height:1.6;}
   .emoji{font-size:54px;display:block;margin:4px 0 14px;}
-  .btn{font-family:"Jua",sans-serif;font-size:19px;border:none;cursor:pointer;padding:15px 22px;border-radius:18px;color:#fff;width:100%;background:linear-gradient(135deg,var(--rose),var(--coral));box-shadow:0 8px 20px -6px rgba(226,78,115,.22);margin-top:6px;}
-  .btn.gold{background:linear-gradient(135deg,#F3C969,var(--gold));color:#5a3d00;}
-  .btn.ghost{background:#fff;color:var(--rose-deep);border:2px solid #ffd7e1;box-shadow:none;}
+  .btn{font-family:"Jua",sans-serif;font-size:19px;border:none;cursor:pointer;padding:15px 22px;border-radius:18px;color:#fff;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-soft));box-shadow:0 8px 20px -6px rgba(0,0,0,.22);margin-top:6px;transition:background .5s;}
+  .btn.gold{background:linear-gradient(135deg,#F3C969,#EBB94A);color:#5a3d00;}
+  .btn.ghost{background:#fff;color:var(--accent-deep);border:2px solid var(--chipbd);box-shadow:none;}
   #noBtn{background:#fff;color:#b98;border:2px solid #eee;box-shadow:none;transition:left .25s,top .25s;}
   #noBtn.run{position:fixed;z-index:5;width:auto;min-width:120px;}
   .field{margin:16px 0 6px;text-align:left;}
-  .field label{font-family:"Jua",sans-serif;font-size:16px;color:var(--rose-deep);display:block;margin:0 0 7px;}
+  .field label{font-family:"Jua",sans-serif;font-size:16px;color:var(--accent-deep);display:block;margin:0 0 7px;}
   input{
     -webkit-appearance:none;appearance:none;box-sizing:border-box;
     display:block;width:100%;max-width:100%;min-width:0;
     font-family:"Gowun Dodum",sans-serif;font-size:16px;color:var(--ink);
-    padding:14px 14px;border:2px solid #ffd7e1;border-radius:16px;background:#fff8fa;outline:none;
+    padding:14px 14px;border:2px solid var(--chipbd);border-radius:16px;background:var(--chipbg);outline:none;
   }
-  input:focus{border-color:var(--rose);}
+  input:focus{border-color:var(--accent);}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:18px 0 8px;}
-  .chip{font-size:16px;padding:16px 8px;border-radius:16px;background:#fff8fa;border:2px solid #ffe0e8;cursor:pointer;user-select:none;}
-  .chip .ic{display:block;font-size:26px;margin-bottom:5px;}
-  .chip.sel{background:#ffe6ef;border-color:var(--rose);color:var(--rose-deep);}
-  .chip.wide{grid-column:1/-1;}
-  .ticket{background:#fff6f9;border:2px dashed var(--rose);border-radius:22px;padding:24px 22px;margin:6px 0 18px;}
+  .chip{font-size:16px;padding:18px 8px;border-radius:16px;background:var(--chipbg);border:2px solid var(--chipbd);cursor:pointer;user-select:none;transition:.2s;}
+  .chip .ic{display:block;font-size:30px;margin-bottom:6px;}
+  .chip.sel{background:#fff;border-color:var(--accent);color:var(--accent-deep);box-shadow:0 6px 16px -8px rgba(0,0,0,.25);transform:translateY(-2px);}
+  .ticket{background:var(--chipbg);border:2px dashed var(--accent);border-radius:22px;padding:24px 22px;margin:6px 0 18px;transition:.5s;}
   .ticket h2{font-family:"Jua",sans-serif;font-weight:400;margin:0 0 16px;font-size:23px;color:var(--ink);}
-  .line{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px dashed #f2c9d6;}
+  .line{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px dashed rgba(0,0,0,.12);}
   .line:last-child{border-bottom:none;}
-  .k{font-family:"Jua",sans-serif;color:var(--rose-deep);font-size:15px;}
+  .k{font-family:"Jua",sans-serif;color:var(--accent-deep);font-size:15px;}
   .v{font-size:17px;font-weight:700;max-width:62%;text-align:right;}
   .hint{font-size:13px;color:#b08a97;margin-top:12px;}
 </style>
@@ -69,13 +72,20 @@
   </section>
 
   <section class="step" id="s3">
-    <h1>이 날 뭐 할까? ✨</h1>
-    <p class="sub">데이트 테마를 골라줘!</p>
-    <div class="grid" id="themeGrid"></div>
-    <button class="btn gold" onclick="pickTheme()">이걸로 정했어! 💌</button>
+    <h1>어느 계절이 좋아? 🍃</h1>
+    <p class="sub">계절을 누르면 분위기가 바뀌어!</p>
+    <div class="grid" id="seasonGrid"></div>
+    <button class="btn" onclick="pickSeason()">이 계절로! 👉</button>
   </section>
 
   <section class="step" id="s4">
+    <h1 id="actTitle">뭐 하고 놀까? ✨</h1>
+    <p class="sub">데이트 활동을 골라줘!</p>
+    <div class="grid" id="actGrid"></div>
+    <button class="btn gold" onclick="pickActivity()">이걸로 정했어! 💌</button>
+  </section>
+
+  <section class="step" id="s5">
     <span class="emoji">💌</span>
     <h1>거절 안 해줘서 고마워!</h1>
     <p class="sub">예쁘게 입고 갈게, 완전 기대돼! 💕</p>
@@ -83,37 +93,79 @@
       <h2>우리의 데이트 약속</h2>
       <div class="line"><span class="k">📅 날짜</span><span class="v" id="outDate">-</span></div>
       <div class="line"><span class="k">⏰ 시간</span><span class="v" id="outTime">-</span></div>
-      <div class="line"><span class="k">🎀 테마</span><span class="v" id="outTheme">-</span></div>
+      <div class="line"><span class="k">🍃 계절</span><span class="v" id="outSeason">-</span></div>
+      <div class="line"><span class="k">🎈 활동</span><span class="v" id="outAct">-</span></div>
     </div>
     <button class="btn gold" onclick="saveImage()">📸 이미지 저장해서 답장 보내기</button>
-    <button class="btn ghost" onclick="go(1)">처음부터 다시하기</button>
+    <button class="btn ghost" onclick="resetAll()">처음부터 다시하기</button>
     <p class="hint">저장한 이미지를 나한테 보내주면 돼! 💗</p>
   </section>
 
 </div>
 
 <script>
-const THEMES=[
-  {ic:"🎬",name:"영화관"},{ic:"☕",name:"감성 카페"},
-  {ic:"🍽️",name:"맛집 투어"},{ic:"🔐",name:"방탈출"},
-  {ic:"🎨",name:"전시회"},{ic:"🚗",name:"드라이브"},
-  {ic:"🎡",name:"놀이공원"},{ic:"🌇",name:"노을 산책"}
+// 계절 + 색 팔레트 + 활동 목록
+const SEASONS=[
+  {ic:"🌸",name:"봄 · 벚꽃",
+   c:{ink:"#6B3A4E",accent:"#FF7FA5",accentDeep:"#E24E73",accentSoft:"#FFB3C6",bg1:"#FFF0F4",bg2:"#FDE3EE",bg3:"#F6E6FF",chipbg:"#fff6f9",chipbd:"#ffdbe6"},
+   acts:[{ic:"🌸",name:"벚꽃 나들이"},{ic:"🧺",name:"한강 피크닉"},{ic:"🌷",name:"플라워 카페"},{ic:"🎪",name:"봄꽃 축제"}]},
+  {ic:"🌊",name:"여름 · 바다",
+   c:{ink:"#1E4A66",accent:"#2BB3D6",accentDeep:"#1789B0",accentSoft:"#8FE3F0",bg1:"#EAF9FF",bg2:"#D5F0FB",bg3:"#E3F7F1",chipbg:"#f2fbff",chipbd:"#c9ecf7"},
+   acts:[{ic:"🏖️",name:"바다 드라이브"},{ic:"🌊",name:"워터파크"},{ic:"🏮",name:"여름 야시장"},{ic:"🌃",name:"한강 야경"}]},
+  {ic:"🍁",name:"가을 · 단풍",
+   c:{ink:"#6E3A1E",accent:"#F08A3C",accentDeep:"#D96A1E",accentSoft:"#F7B36B",bg1:"#FFF2E4",bg2:"#FBE3CB",bg3:"#F7EAD3",chipbg:"#fff6ec",chipbd:"#f6dcc0"},
+   acts:[{ic:"🍁",name:"단풍 산책"},{ic:"🌾",name:"억새밭 나들이"},{ic:"☕",name:"감성 카페 투어"},{ic:"🌇",name:"노을 드라이브"}]},
+  {ic:"⛄",name:"겨울 · 눈꽃",
+   c:{ink:"#33506E",accent:"#6F9BD6",accentDeep:"#4A7BC0",accentSoft:"#B7D3F0",bg1:"#F2F7FF",bg2:"#E6EFFB",bg3:"#EFF3FA",chipbg:"#f6faff",chipbd:"#d5e3f5"},
+   acts:[{ic:"⛷️",name:"눈썰매·스키"},{ic:"🐟",name:"붕어빵 데이트"},{ic:"🎄",name:"크리스마스 마켓"},{ic:"🔥",name:"아늑한 카페"}]}
 ];
 
-let selectedTheme=null;
-const g=document.getElementById('themeGrid');
-THEMES.forEach(t=>{
+let selectedSeason=null, selectedAct=null;
+
+// 계절 칩 렌더
+const sg=document.getElementById('seasonGrid');
+SEASONS.forEach(s=>{
   const c=document.createElement('div');
   c.className='chip';
-  c.innerHTML='<span class="ic">'+t.ic+'</span>'+t.name;
-  c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');selectedTheme=t;};
-  g.appendChild(c);
+  c.innerHTML='<span class="ic">'+s.ic+'</span>'+s.name;
+  c.onclick=()=>{
+    document.querySelectorAll('#seasonGrid .chip').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');
+    selectedSeason=s; selectedAct=null;
+    applyPalette(s.c);       // 누르는 순간 배경 바뀜
+  };
+  sg.appendChild(c);
 });
-const any=document.createElement('div');
-any.className='chip wide';
-any.innerHTML='<span class="ic">😊</span>난 뭐든 다 좋아!';
-any.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));any.classList.add('sel');selectedTheme={ic:"😊",name:"뭐든 다 좋아"};};
-g.appendChild(any);
+
+// 활동 칩 렌더 (계절 선택 후)
+function renderActs(){
+  const ag=document.getElementById('actGrid');
+  ag.innerHTML='';
+  document.getElementById('actTitle').textContent=selectedSeason.ic+" "+selectedSeason.name.split(" · ")[0]+", 뭐 하고 놀까?";
+  selectedSeason.acts.forEach(a=>{
+    const c=document.createElement('div');
+    c.className='chip';
+    c.innerHTML='<span class="ic">'+a.ic+'</span>'+a.name;
+    c.onclick=()=>{
+      document.querySelectorAll('#actGrid .chip').forEach(x=>x.classList.remove('sel'));
+      c.classList.add('sel');
+      selectedAct=a;
+    };
+    ag.appendChild(c);
+  });
+}
+
+function applyPalette(c){
+  const r=document.documentElement.style;
+  r.setProperty('--ink',c.ink);r.setProperty('--accent',c.accent);
+  r.setProperty('--accent-deep',c.accentDeep);r.setProperty('--accent-soft',c.accentSoft);
+  r.setProperty('--bg1',c.bg1);r.setProperty('--bg2',c.bg2);r.setProperty('--bg3',c.bg3);
+  r.setProperty('--chipbg',c.chipbg);r.setProperty('--chipbd',c.chipbd);
+}
+function resetPalette(){
+  const r=document.documentElement.style;
+  ['--ink','--accent','--accent-deep','--accent-soft','--bg1','--bg2','--bg3','--chipbg','--chipbd'].forEach(k=>r.removeProperty(k));
+}
 
 function go(n){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
@@ -126,14 +178,12 @@ const tm=new Date();tm.setDate(tm.getDate()+1);
 d.min=new Date().toISOString().split('T')[0];
 d.value=tm.toISOString().split('T')[0];
 
-// 도망가는 싫어 버튼
 const no=document.getElementById('noBtn');
 const texts=["싫어","진짜 싫어?","한 번만~","에이 왜~","제발!! 🥺","도망가지 마!"];
 let i=0;
 function run(){
   i=Math.min(i+1,texts.length-1);
-  no.textContent=texts[i];
-  no.classList.add('run');
+  no.textContent=texts[i];no.classList.add('run');
   const w=no.offsetWidth,h=no.offsetHeight;
   no.style.left=(Math.random()*(innerWidth-w-20)+10)+'px';
   no.style.top=(Math.random()*(innerHeight-h-20)+10)+'px';
@@ -156,15 +206,28 @@ function pickDate(){
   go(3);
 }
 
-function pickTheme(){
-  if(!selectedTheme){alert("테마를 하나 골라줘! ✨");return;}
-  document.getElementById('outDate').textContent=dateStr;
-  document.getElementById('outTime').textContent=timeStr;
-  document.getElementById('outTheme').textContent=selectedTheme.ic+" "+selectedTheme.name;
+function pickSeason(){
+  if(!selectedSeason){alert("계절을 하나 골라줘! ✨");return;}
+  renderActs();
   go(4);
 }
 
-// 아이폰 친화 저장: 공유창 → 안 되면 이미지 꾹 눌러 저장
+function pickActivity(){
+  if(!selectedAct){alert("활동을 하나 골라줘! ✨");return;}
+  document.getElementById('outDate').textContent=dateStr;
+  document.getElementById('outTime').textContent=timeStr;
+  document.getElementById('outSeason').textContent=selectedSeason.ic+" "+selectedSeason.name;
+  document.getElementById('outAct').textContent=selectedAct.ic+" "+selectedAct.name;
+  go(5);
+}
+
+function resetAll(){
+  selectedSeason=null;selectedAct=null;
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));
+  resetPalette();
+  go(1);
+}
+
 async function saveImage(){
   const el=document.getElementById('ticket');
   try{
@@ -187,7 +250,7 @@ function showOverlay(url){
   txt.style.cssText="color:#fff;font-family:'Gowun Dodum',sans-serif;text-align:center;margin:0;";
   const btn=document.createElement('button');
   btn.textContent="닫기";
-  btn.style.cssText="padding:12px 26px;border:none;border-radius:14px;background:#fff;color:#E24E73;font-family:'Jua',sans-serif;font-size:16px;";
+  btn.style.cssText="padding:12px 26px;border:none;border-radius:14px;background:#fff;color:#333;font-family:'Jua',sans-serif;font-size:16px;";
   btn.onclick=()=>ov.remove();
   ov.append(img,txt,btn);document.body.appendChild(ov);
 }
